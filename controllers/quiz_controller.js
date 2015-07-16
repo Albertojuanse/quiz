@@ -17,14 +17,14 @@ exports.index = function(req, res) {
 	query = req.query.search;
 	if ((typeof query == "string") && (query.trim() != " ")) {
 		models.Quiz.findAll({where: ["pregunta like ?", '%' + query + '%'], order: 'pregunta ASC'}).then(function(quizes){
-			res.render('quizes', {quizes: quizes});
+			res.render('quizes', {quizes: quizes, errors: []});
 		});
 
 	} else {
 
 	models.Quiz.findAll().then(
 		function(quizes) {
-			res.render('quizes/index', {quizes: quizes}); //poner sino index.ejs
+			res.render('quizes/index', {quizes: quizes, errors: []}); //poner sino index.ejs
 		}
 	).catch(function(error) {next(error);});
 	}
@@ -33,7 +33,7 @@ exports.index = function(req, res) {
 //GET /quizes/:id
 exports.show = function(req, res) {
 	//models.Quiz.find(req.params.quizId).then(function(quiz) {
-		res.render('quizes/show', {quiz: req.quiz});
+		res.render('quizes/show', {quiz: req.quiz, errors: []});
 	//})
 };
 
@@ -50,7 +50,7 @@ exports.answer = function(req, res){
 	if (req.query.respuesta === req.quiz.respuesta) {
 		resultado = 'Correcto';
 	}
-	res.render('quizes/answer', {quiz: req.quiz, respuesta: resultado});
+	res.render('quizes/answer', {quiz: req.quiz, respuesta: resultado, errors: []});
 };
 
 
@@ -88,15 +88,20 @@ exports.new = function(req, res) {
 	var quiz = models.Quiz.build(   //crea objeto quiz
 		{pregunta: "Pregunta", respuesta: "Respuesta"}
 		);
-	res.render('quizes/new', {quiz: quiz});
+	res.render('quizes/new', {quiz: quiz, errors: []});
 };
 
 //POST /quizes/create
 exports.create = function(req, res){
 	var quiz = models.Quiz.build(req.body.quiz);  //aquí se personalizan quiz[pregunta] y quiz[respuesta] de _form
 
+	quiz.validate().then(function(err){
+		if (err){ res.render('quizes/new', {quiz: quiz, errors: err.errors});
+	} else {
 	//guarda en DB los campos pregunta y respuesta de quiz
 	quiz.save({fields: ["pregunta", "respuesta"]}).then(function(){
-		res.redirect('/quizes');
-	})   //redirección HTTP URL relativo lista de preguntas
+		res.redirect('/quizes')})   //redirección HTTP URL relativo lista de preguntas
+	}
+	}
+	);
 };
