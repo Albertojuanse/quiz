@@ -82,3 +82,21 @@ exports.question = function(req, res){
 //			res.render('quizes/index', {quizes: quizes, query: query});
 //		});
 //	}
+
+//GET /quizes/new
+exports.new = function(req, res) {
+	var quiz = models.Quiz.build(   //crea objeto quiz
+		{pregunta: "Pregunta", respuesta: "Respuesta"}
+		);
+	res.render('quizes/new', {quiz: quiz});
+};
+
+//POST /quizes/create
+exports.create = function(req, res){
+	var quiz = models.Quiz.build(req.body.quiz);  //aquí se personalizan quiz[pregunta] y quiz[respuesta] de _form
+
+	//guarda en DB los campos pregunta y respuesta de quiz
+	quiz.save({fields: ["pregunta", "respuesta"]}).then(function(){
+		res.redirect('/quizes');
+	})   //redirección HTTP URL relativo lista de preguntas
+};
