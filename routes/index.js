@@ -11,4 +11,9 @@ router.get('/', function(req, res) {
 router.get('/quizes/question', quizController.question);
 router.get('/quizes/answer',   quizController.answer);
 
+//en branch creditos
+router.get('/author', function(req, res) {
+	res.render('author');                   //creo que así está bien, sino meterle parámetro
+});
+
 module.exports = router;
