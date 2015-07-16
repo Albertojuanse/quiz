@@ -26,7 +26,7 @@ exports.index = function(req, res) {
 		function(quizes) {
 			res.render('quizes/index', {quizes: quizes, errors: []}); //poner sino index.ejs
 		}
-	).catch(function(error) {next(error);});
+	).catch(function(error) {next(error);});  //mirar si quitar o añadir ; después de error)
 	}
 };
 
@@ -130,4 +130,11 @@ exports.update = function(req, res) {
 			}
 		}
 	);
+};
+
+//DELETE /quizes/:id
+exports.destroy = function(req, res) {
+	req.quiz.destroy().then( function() {
+		res.redirect('/quizes');
+	}).catch(function(error){next(error)});
 };
