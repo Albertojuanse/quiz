@@ -17,7 +17,7 @@ exports.index = function(req, res) {
 	query = req.query.search;
 	if ((typeof query == "string") && (query.trim() != " ")) {
 		models.Quiz.findAll({where: ["pregunta like ?", '%' + query + '%'], order: 'pregunta ASC'}).then(function(quizes){
-			res.render('quizes/index', {quizes: quizes});
+			res.render('quizes', {quizes: quizes});
 		});
 
 	} else {
